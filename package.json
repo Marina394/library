@@ -1,0 +1,34 @@
+{
+  "name": "web-hmi",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@blockly/theme-modern": "^5.0.6",
+    "@types/drawflow": "^0.0.11",
+    "@vicons/ionicons5": "^0.12.0",
+    "@vueuse/core": "^10.9.0",
+    "autoprefixer": "^10.4.19",
+    "blockly": "^10.4.3",
+    "chart-js-fabric": "^1.0.7",
+    "drawflow": "^0.0.59",
+    "element-plus": "^2.7.0",
+    "fabric": "^5.4.2",
+    "litegraph.js": "^0.7.18",
+    "naive-ui": "^2.38.1",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.7.2",
+    "vue": "^3.4.21",
+    "vuex": "^4.0.2"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.1.6"
+  }
+}
