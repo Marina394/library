@@ -11,19 +11,34 @@ import {RectangleShape} from "@/components/graphicPrimitives/Rectangle/rectangle
 import {PolygonShape} from "@/components/graphicPrimitives/Polygon/polygon.ts";
 import {TriangleShape} from "@/components/graphicPrimitives/Triangle/triangle.ts";
 import {install} from 'chart-js-fabric'
+import { nextTick } from 'vue';
+
 
 install(fabric)
 
 import {VerticalIndicator} from "@/components/baseElements/VerticalIndicator/VerticalIndicator.ts";
 import { ToggleButtonShape } from '@/components/ToggleButton.ts';
-import { StatusIndicatorShape } from '@/components/StatusIndicator.ts';
+import { StatusIndicatorShape } from '@/components/StatusIndicator/StatusIndicator.ts';
+import { StartButtonShape } from '@/components/StartButton/StartButton.ts';
+import { StopButtonShape } from '@/components/StopButton/StopButton.ts';
+import { DigitalIndicatorShape } from '@/components/DigitalIndicator/DigitalIndicator.ts';
+import { LevelIndicatorShape } from '@/components/LevelIndicator/LevelIndicator.ts';
+import { ChartComponentShape } from '@/components/ChartComponent/ChartComponent.ts';
+import { SpeedIndicatorShape } from '@/components/SpeedIndicator/SpeedIndicator.ts';
+import { SpeedometerShape } from '@/components/Speedometer/Speedometer.ts';
+import { Elevator } from '@/components/Elevator/Elevator.ts';
+import { TrafficLight } from '@/components/TrafficLight/TrafficLight.ts';
+import { TextStatusIndicatorShape } from '@/components/TextStatusIndicator/TextStatusIndicator.ts';
+
+
 import { ValueTumblerShape } from '@/components/ValueTumbler.ts';
 
 
 export default {
   data() {
     return {
-      isSpacePressed: false
+      isSpacePressed: false,
+      elevatorCount: 1 
     };
   },
   mounted() {
@@ -111,6 +126,11 @@ export default {
       const x = event.clientX - rect.left;
       const y = event.clientY - rect.top;
 
+      const width = event.dataTransfer.getData("width") || '150'; // Значение по умолчанию 150
+      const height = event.dataTransfer.getData("height") || '200'; // Значение по умолчанию 200
+
+
+
       switch (shape) {
         case 'circle':
           new CircleShape(this.canvas, x, y);
@@ -127,6 +147,55 @@ export default {
           break;
         case 'vertical-indicator':
           new VerticalIndicator(this.canvas, x, y);
+          break;
+
+        case 'stop-button':
+          new StopButtonShape(this.canvas, x, y);
+          break;
+        case 'start-button':
+          new StartButtonShape(this.canvas, x, y);
+          break;
+
+        case 'level-indicator':
+          new LevelIndicatorShape(this.canvas, x, y);
+          break;
+          
+        case 'digital-indicator':
+          const indicator = new DigitalIndicatorShape(this.canvas, x, y, 0);
+          nextTick(() => {
+            // чтобы Vue не запутался — всё уже в DOM
+            this.canvas.requestRenderAll();
+          });
+          break;
+
+        case 'chart-component':
+          new ChartComponentShape(this.canvas, x, y);
+          break;
+
+        case 'speed-indicator':
+          new SpeedIndicatorShape(this.canvas, x, y);
+          break;
+
+        case 'speedometer':
+          new SpeedometerShape(this.canvas, x, y);
+          break;
+
+        case 'elevator':
+          const elevator = new Elevator(
+            this.canvas,
+            x - 85,
+            y - 100,
+            this.elevatorCount++
+          );
+          
+          // Обработчик перемещения
+          this.canvas.on('object:moving', (e) => {
+            if (e.target === elevator.group) {
+              const left = e.target.left || 0;
+              const top = e.target.top || 0;
+              elevator.setPosition(left, top);
+            }
+          });
           break;
 
         case 'toggle-button':
@@ -167,6 +236,27 @@ export default {
         case 'status-indicator':
           const statusIndicator = new StatusIndicatorShape(this.canvas, x, y);
           this.canvas.add(statusIndicator);
+          break;
+
+
+      
+        case 'text-status-indicator':
+          new TextStatusIndicatorShape(this.canvas, x, y);
+          break;
+
+        case 'traffic-light':
+          const trafficLight = new TrafficLight(
+            this.canvas,
+            x - 40,
+            y - 100,
+            this.trafficLightCount++
+          );
+          
+          this.canvas.on('object:moving', (e) => {
+            if (e.target === trafficLight.group) {
+              trafficLight.setPosition(e.target.left || 0, e.target.top || 0);
+            }
+          });
           break;
 
 

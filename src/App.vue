@@ -57,7 +57,7 @@ export default {
     };
 
     onMounted(() => {
-      websocket.value = new WebSocket("ws://localhost:8000/ws");
+      websocket.value = new WebSocket("ws://localhost:3000");
       websocket.value.onmessage = handleWebSocketMessage;
       websocket.value.onopen = () => console.log("WebSocket connected");
       websocket.value.onerror = (error) => console.error("WebSocket error:", error);

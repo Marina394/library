@@ -16,9 +16,10 @@
     "autoprefixer": "^10.4.19",
     "blockly": "^10.4.3",
     "chart-js-fabric": "^1.0.7",
+    "chart.js": "^4.4.8",
     "drawflow": "^0.0.59",
     "element-plus": "^2.7.0",
-    "fabric": "^5.4.2",
+    "fabric": "^4.6.0",
     "litegraph.js": "^0.7.18",
     "naive-ui": "^2.38.1",
     "postcss": "^8.4.38",
@@ -28,7 +29,9 @@
     "vuex": "^4.0.2"
   },
   "devDependencies": {
+    "@types/chart.js": "^2.9.41",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/compiler-sfc": "^3.5.13",
     "vite": "^5.1.6"
   }
 }
