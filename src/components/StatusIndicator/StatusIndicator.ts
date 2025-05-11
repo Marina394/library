@@ -1,126 +1,74 @@
 import { fabric } from 'fabric';
 
 export class StatusIndicatorShape extends fabric.Group {
-    constructor(canvas: any, x: number, y: number, radius: number = 40) {
-        const items = [];
+  private circle: fabric.Circle;
+  private intervalId?: number;
 
-        // Свечение с рассеиванием света
-        const glow = new fabric.Circle({
-            left: 0,
-            top: 0,
-            radius: radius + 40, // Расширяем радиус для рассеивания
-            originX: 'center',
-            originY: 'center',
-            fill: new fabric.Gradient({
-                type: 'radial',
-                coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                colorStops: [
-                    { offset: 0, color: 'rgba(255, 0, 0, 0.5)' }, // Яркий центр
-                    { offset: 1, color: 'rgba(255, 0, 0, 0)' },   // Прозрачный край
-                ],
-            }),
-        });
+  constructor(canvas: fabric.Canvas, x: number, y: number) {
+    // Неоново-тёмный фон
+    const background = new fabric.Rect({
+      width: 80,
+      height: 80,
+      fill: 'rgba(30,30,30,0.9)',
+      rx: 12,
+      ry: 12,
+      stroke: 'rgba(255,255,255,0.2)',
+      strokeWidth: 1,
+    });
 
-        // Основная часть лампочки
-        const glassBulb = new fabric.Circle({
-            left: 0,
-            top: 0,
-            radius: radius,
-            fill: 'rgba(200, 200, 255, 0.5)', // Цвет стекла
-            stroke: 'black',
-            strokeWidth: 2,
-            originX: 'center',
-            originY: 'center',
-        });
+    // Лампочка (по умолчанию выключена)
+    const circle = new fabric.Circle({
+      radius: 18,
+      fill: 'rgba(0, 0, 0, 0.4)', // тёмный
+      stroke: 'rgba(255,255,255,0.1)',
+      strokeWidth: 2,
+      shadow: new fabric.Shadow({
+        color: 'rgba(0,255,0,0.0)',
+        blur: 10,
+        offsetX: 0,
+        offsetY: 0,
+      }),
+      left: 40,
+      top: 40,
+      originX: 'center',
+      originY: 'center',
+    });
 
-        // Блик на лампочке
-        const highlight = new fabric.Circle({
-            left: -radius / 3,
-            top: -radius / 3,
-            radius: radius / 6,
-            fill: 'rgba(255, 255, 255, 0.8)', // Блик
-            originX: 'center',
-            originY: 'center',
-        });
+    super([background, circle], {
+      left: x,
+      top: y,
+      hasControls: false,
+      hasBorders: false,
+      hoverCursor: 'pointer',
+    });
 
-        // Добавляем элементы в группу
-        items.push(glow, glassBulb, highlight);
-        super(items, {
-            left: x - radius,
-            top: y - radius,
-        });
+    this.circle = circle;
 
-        // Логика переключения цвета и свечения
-        this.on('mousedown', () => {
-            const currentColor = glassBulb.fill as string;
+    canvas.add(this);
+    this.startPolling();
+  }
 
-            let nextColor: string;
-            let glowGradient: fabric.Gradient;
+  // Обновление внешнего вида по состоянию
+  updateState(isOn: boolean) {
+    this.circle.set('fill', isOn ? '#00ff00' : 'rgba(0,0,0,0.4)');
+    this.circle.set('shadow', new fabric.Shadow({
+      color: isOn ? 'rgba(0,255,0,0.6)' : 'rgba(0,0,0,0)',
+      blur: 15,
+      offsetX: 0,
+      offsetY: 0,
+    }));
+    this.canvas?.requestRenderAll();
+  }
 
-            switch (currentColor) {
-                case 'rgba(200, 200, 255, 0.5)': // Стекло (покой) → Жёлтый
-                    nextColor = 'yellow';
-                    glowGradient = new fabric.Gradient({
-                        type: 'radial',
-                        coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                        colorStops: [
-                            { offset: 0, color: 'rgba(255, 255, 0, 0.5)' }, // Жёлтое свечение
-                            { offset: 1, color: 'rgba(255, 255, 0, 0)' },
-                        ],
-                    });
-                    break;
-                case 'yellow': // Жёлтый → Красный
-                    nextColor = 'red';
-                    glowGradient = new fabric.Gradient({
-                        type: 'radial',
-                        coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                        colorStops: [
-                            { offset: 0, color: 'rgba(255, 0, 0, 0.5)' }, // Красное свечение
-                            { offset: 1, color: 'rgba(255, 0, 0, 0)' },
-                        ],
-                    });
-                    break;
-                case 'red': // Красный → Зелёный
-                    nextColor = 'green';
-                    glowGradient = new fabric.Gradient({
-                        type: 'radial',
-                        coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                        colorStops: [
-                            { offset: 0, color: 'rgba(0, 255, 0, 0.5)' }, // Зелёное свечение
-                            { offset: 1, color: 'rgba(0, 255, 0, 0)' },
-                        ],
-                    });
-                    break;
-                case 'green': // Зелёный → Стекло (покой)
-                    nextColor = 'rgba(200, 200, 255, 0.5)'; // Цвет стекла
-                    glowGradient = new fabric.Gradient({
-                        type: 'radial',
-                        coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                        colorStops: [
-                            { offset: 0, color: 'rgba(0, 0, 0, 0)' }, // Без свечения
-                            { offset: 1, color: 'rgba(0, 0, 0, 0)' },
-                        ],
-                    });
-                    break;
-                default: // Восстановление стекла
-                    nextColor = 'rgba(200, 200, 255, 0.5)';
-                    glowGradient = new fabric.Gradient({
-                        type: 'radial',
-                        coords: { x1: radius + 40, y1: radius + 40, r1: 0, x2: radius + 40, y2: radius + 40, r2: radius + 40 },
-                        colorStops: [
-                            { offset: 0, color: 'rgba(0, 0, 0, 0)' }, // Без свечения
-                            { offset: 1, color: 'rgba(0, 0, 0, 0)' },
-                        ],
-                    });
-            }
-
-            // Применяем изменения
-            glassBulb.set('fill', nextColor);
-            glow.set('fill', glowGradient);
-            canvas.renderAll();
-        });
-
-        // Добавляем элемент на холст
-        canvas.add(this);
-    }
+  // Автообновление с сервера
+  startPolling() {
+    this.intervalId = window.setInterval(() => {
+      fetch('http://localhost:3000/api/status-indicator')
+        .then(res => res.json())
+        .then(data => {
+          this.updateState(data?.value === true);
+        })
+        .catch(err => console.error('Ошибка получения данных:', err));
+    }, 3000);
+  }
 }

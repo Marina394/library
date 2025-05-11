@@ -17,7 +17,6 @@ import { nextTick } from 'vue';
 install(fabric)
 
 import {VerticalIndicator} from "@/components/baseElements/VerticalIndicator/VerticalIndicator.ts";
-import { ToggleButtonShape } from '@/components/ToggleButton.ts';
 import { StatusIndicatorShape } from '@/components/StatusIndicator/StatusIndicator.ts';
 import { StartButtonShape } from '@/components/StartButton/StartButton.ts';
 import { StopButtonShape } from '@/components/StopButton/StopButton.ts';
@@ -29,6 +28,10 @@ import { SpeedometerShape } from '@/components/Speedometer/Speedometer.ts';
 import { Elevator } from '@/components/Elevator/Elevator.ts';
 import { TrafficLight } from '@/components/TrafficLight/TrafficLight.ts';
 import { TextStatusIndicatorShape } from '@/components/TextStatusIndicator/TextStatusIndicator.ts';
+import { AnimatedButton } from '@/components/AnimatedButton/AnimatedButton.ts';
+import { ToggleButton } from '@/components/ToggleButton/ToggleButton.ts';
+import { NumberInputField } from '@/components/NumberInputField/NumberInputField.ts';
+import { NumberOutputField } from '@/components/NumberOutputField/NumberOutputField.ts';
 
 
 import { ValueTumblerShape } from '@/components/ValueTumbler.ts';
@@ -168,6 +171,26 @@ export default {
           });
           break;
 
+        case 'animated-button':
+          const animatedButton = new AnimatedButton(this.canvas, x, y);
+          this.canvas.add(animatedButton.group);
+          break;
+
+        case 'toggle-button':
+          const toggle = new ToggleButton(this.canvas, x, y);
+          this.canvas.add(toggle.group);
+          break;
+          
+        
+        case 'number-input-field':
+          new NumberInputField(this.canvas, x, y);
+          break;
+          
+        case 'number-output-field':
+          new NumberOutputField(this.canvas, x, y);
+          break;
+
+
         case 'chart-component':
           new ChartComponentShape(this.canvas, x, y);
           break;
@@ -198,40 +221,6 @@ export default {
           });
           break;
 
-        case 'toggle-button':
-          const toggleButton = new fabric.Rect({
-            left: x,
-            top: y,
-            width: 120,
-            height: 50,
-            fill: 'green',
-            rx: 10,
-            ry: 10,
-            stroke: 'black',
-            strokeWidth: 2,
-          });
-
-          const toggleText = new fabric.Text('ON', {
-            fontSize: 18,
-            fill: 'white',
-            originX: 'center',
-            originY: 'center',
-          });
-
-          const group = new fabric.Group([toggleButton, toggleText], {
-            left: x,
-            top: y,
-          });
-
-          group.on('mousedown', () => {
-            const isOn = toggleButton.fill === 'green';
-            toggleButton.set('fill', isOn ? 'red' : 'green');
-            toggleText.set('text', isOn ? 'OFF' : 'ON');
-            this.canvas.renderAll();
-          });
-
-          this.canvas.add(group);
-          break;
 
         case 'status-indicator':
           const statusIndicator = new StatusIndicatorShape(this.canvas, x, y);

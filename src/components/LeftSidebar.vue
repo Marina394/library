@@ -1,11 +1,5 @@
 <template>
   <div class="bg-gray-200 h-screen p-5">
-    <!-- Добавляю переключатель -->
-    <div class="p-4">
-      <p>Переключатель:</p>
-      <Switch v-model="isOn" />
-      <p>Состояние: {{ isOn }}</p>
-    </div>
     <n-collapse default-expanded-names="1">
       <n-collapse-item title="Простые фигуры" name="1">
         <div class="grid grid-cols-4 gap-4">
@@ -85,12 +79,31 @@
             <ReorderFourOutline/>
           </n-icon>
 
-          <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'chart')" class="mr-4">
-            <BarChartOutline/>
+          
+          <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'animated-button')" class="mr-4">
+          <!-- тут нужно поставить иконку кнопки -->
+            <ReorderFourOutline/>
           </n-icon>
 
+          
           <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'toggle-button')" class="mr-4">
-            <ToggleOutline />
+          <!-- тут нужно поставить иконку кнопки -->
+            <ReorderFourOutline/>
+          </n-icon>
+
+          <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'number-input-field')" class="mr-4">
+          <!-- тут нужно поставить иконку кнопки -->
+            <ReorderFourOutline/>
+          </n-icon>
+           
+          <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'number-output-field')" class="mr-4">
+          <!-- тут нужно поставить иконку кнопки -->
+            <ReorderFourOutline/>
+          </n-icon>
+
+
+          <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'chart')" class="mr-4">
+            <BarChartOutline/>
           </n-icon>
 
           <n-icon size="24" draggable="true" @dragstart="dragStart($event, 'status-indicator')" class="mr-4">
